@@ -4,12 +4,15 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.stopScroll
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.Card
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -22,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import hu.tb.stoppingscroll.ui.theme.StoppingScrollTheme
 import kotlinx.coroutines.delay
@@ -63,14 +67,13 @@ fun MainScreen() {
             } else {
                 -1
             }
-            fullyVisibleItemKey.toString().toInt() == 50
+            fullyVisibleItemKey.toString().toInt() == SELECTED_ITEM_INDEX
         }
     }
 
     LaunchedEffect(isReachPromotedItem) {
         if (isReachPromotedItem) {
             scope.launch {
-                listState.scrollToItem(50)
                 listState.stopScroll()
             }
             scope.launch {
@@ -93,15 +96,27 @@ fun MainScreen() {
                 items = mockList,
                 key = { it }
             ) { item ->
-                ListItem(
-                    headlineContent = {
+                if (item.toInt() == SELECTED_ITEM_INDEX) {
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(Color.LightGray)
+                    ) {
                         Text(item)
                     }
-                )
+                } else {
+                    ListItem(
+                        headlineContent = {
+                            Text(item)
+                        }
+                    )
+                }
             }
         }
     }
 }
+
+private const val SELECTED_ITEM_INDEX = 50
 
 @Preview()
 @Composable
